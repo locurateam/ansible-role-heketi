@@ -1,0 +1,29 @@
+---
+# Install Heketi main tasks on Supported system
+- name: ({{ ansible_distribution }}) - MAIN - Install Heketi main tasks on Supported system
+  block:
+
+   # Include Initialize tasks (Linux)
+   - name: ({{ ansible_distribution }}) - MAIN - Include Initialize tasks
+     include_tasks: "initialize.yml"
+
+   # Include Download tasks (Linux)
+   - name: ({{ ansible_distribution }}) - MAIN - Include download tasks
+     include_tasks: "download.yml"
+     when:
+      - heketi_install|bool
+
+   # Include Install tasks (Linux)
+   - name: ({{ ansible_distribution }}) - MAIN - Include install tasks
+     include_tasks: "install.yml"
+     when:
+      - heketi_install|bool
+
+   # Include Configure tasks (Linux)
+   - name: ({{ ansible_distribution }}) - MAIN - Include configure tasks
+     include_tasks: "configure.yml"
+     when:
+      - heketi_configure|bool
+
+  when:
+   - ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Ubuntu"

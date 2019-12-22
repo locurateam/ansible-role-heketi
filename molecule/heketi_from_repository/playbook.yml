@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: all
+  no_log: false
+
+  roles:
+
+   - role: ansible-role-heketi
+     vars:
+      heketi_install: true
+      install_from_repo: true
+      gluster_release: 7
+      heketi_configure: false

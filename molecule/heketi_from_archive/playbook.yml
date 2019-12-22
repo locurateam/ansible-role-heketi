@@ -1,0 +1,41 @@
+---
+- name: Converge
+  hosts: all
+  no_log: false
+
+  tasks:
+
+   - name: "Ensure Custom keys"
+     copy:
+      src: "{{ item }}"
+      dest: "/etc/ssh/"
+      mode: u+rw,g-rwx,o-rwx
+     loop:
+      - "keys/heketi_rsa"
+      - "keys/heketi_rsa.pub"
+
+   - name: "Execute heketi ansible role"
+     include_role:
+      name: ansible-role-heketi
+     vars:
+      heketi_install: true
+      heketi_install_from_repo: false
+      heketi_install_arch: "amd64"
+      heketi_install_version: "9.0.0"
+      heketi_install_dir: "/etc/sds/heketi"
+      heketi_install_client_dir: "/etc/sds/heketi-client"
+      heketi_configure: true
+      heketi_config_dir: "/appli/hkt/param/conf"
+      heketi_config_client_dir: "/appli/hkt/param/conf"
+      heketi_config_filename: "heketi.json"
+      heketi_config_client_filename: "heketi-client.json"
+      heketi_node_executor: "ssh"
+      heketi_service_unit_dir: "/usr/lib/systemd/system"
+      heketi_service_filename: "heketi-sds.service"
+      heketi_service_unit_description: "SDS Provisioning Server [Heketi]"
+      heketi_service_working_dir: "/appli/hkt/var/lib"
+      heketi_service_user: "root"
+      heketi_node_ssh_keyfile: "/etc/ssh/heketi_rsa"
+      heketi_node_ssh_user: "root"
+      heketi_node_xfs_sw: 10
+      heketi_node_xfs_su: 10

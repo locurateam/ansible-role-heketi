@@ -1,0 +1,18 @@
+---
+# Start Heketi handler
+- name: start heketi
+  service:
+   name: "{{ heketi_service_filename.split('.')[0] }}"
+   state: started
+
+# Stop Heketi handler
+- name: stop heketi
+  service:
+   name: "{{ heketi_service_filename.split('.')[0] }}"
+   state: restarted
+
+# Restart Heketi handler
+- name: restart heketi
+  service:
+   name: "{{ heketi_service_filename.split('.')[0] }}"
+   state: restarted

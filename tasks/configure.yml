@@ -1,0 +1,71 @@
+---
+
+- name: ({{ ansible_distribution }}) - CONFIG - Create Heketi Configuration directory
+  file:
+   path: "{{ heketi_config_dir }}"
+   state: directory
+
+- name: ({{ ansible_distribution }}) - CONFIG -  Create Heketi Service Working directory
+  file:
+   path: "{{ heketi_service_working_dir }}"
+   state: directory
+
+- name: ({{ ansible_distribution }}) - CONFIG -  Create Heketi Client Configuration directory
+  file:
+   path: "{{ heketi_config_client_dir }}"
+   state: directory
+
+- name: ({{ ansible_distribution }}) - CONFIG - Create Heketi Data directory
+  file:
+   path: "{{ heketi_data_dir }}"
+   state: directory
+
+- name: ({{ ansible_distribution }}) - CONFIG - Initialize Heketi Configuration template
+  template:
+   src: "templates/heketi-{{ heketi_node_executor }}.json.j2"
+   dest: "{{ heketi_config_dir }}/{{ heketi_config_filename }}"
+   mode: a+rx
+
+- name: ({{ ansible_distribution }}) - CONFIG - Initialize Heketi Service template
+  template:
+   src: "templates/heketi.service.j2"
+   dest: "{{ heketi_service_unit_dir }}/{{ heketi_service_filename }}"
+
+- name: ({{ ansible_distribution }}) - CONFIG - Update conf. dir. Ownership to ({{ heketi_service_user }})
+  file:
+   path: "{{ heketi_config_dir }}"
+   state: directory
+   owner: "{{ heketi_service_user }}"
+   group: "{{ heketi_service_user }}"
+   recurse: true
+
+- name: ({{ ansible_distribution }}) - CONFIG - Update Service Working dir. Ownership to ({{ heketi_service_user }})
+  file:
+   path: "{{ heketi_service_working_dir }}"
+   state: directory
+   owner: "{{ heketi_service_user }}"
+   group: "{{ heketi_service_user }}"
+   recurse: true
+
+- name: ({{ ansible_distribution }}) - CONFIG - Update Client conf. dir. Ownership to ({{ heketi_service_user }})
+  file:
+   path: "{{ heketi_config_client_dir }}"
+   state: directory
+
+- name: ({{ ansible_distribution }}) - CONFIG - Update Data dir. Ownership to ({{ heketi_service_user }})
+  file:
+   path: "{{ heketi_data_dir }}"
+   state: directory
+   owner: "{{ heketi_service_user }}"
+   group: "{{ heketi_service_user }}"
+   recurse: true
+
+- name: ({{ ansible_distribution }}) - CONFIG - Reload Heketi Service ("{{ heketi_service_filename.split('.')[0] }}")
+  service:
+   name: "{{ heketi_service_filename.split('.')[0] }}"
+   enabled: true
+   daemon_reload: true
+   user: "{{ heketi_service_user }}"
+   state: restarted
+  changed_when: false
+  failed_when: false
