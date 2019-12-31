@@ -1,73 +1,51 @@
 ---
 
-# Install Heketi tasks block from repository for on RedHat Family systems
-- name: ({{ ansible_distribution }}) - INSTALL - Tasks block on Supported system
-  block:
+- name: ({{ ansible_distribution }}) - INSTALL - Create Heketi Installation directory
+  file:
+   path: "{{ heketi_install_dir }}"
+   state: directory
 
-   # Package installs
-   - name: Ensure [{{ packages }}] packages are installed
-     package:
-      name: "{{ item }}"
-      state: present
-     loop: "{{ packages }}"
+- name: ({{ ansible_distribution }}) - INSTALL - Create Heketi Client Installation directory
+  file:
+   path: "{{ heketi_install_client_dir }}"
+   state: directory
 
-  when:
-   - repository_installation|bool
-   - ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+- name: ({{ ansible_distribution }}) - INSTALL - Unarchive Downloaded Heketi archives
+  unarchive:
+   src: "{{ dl_file }}"
+   dest: "{{ heketi_install_dir }}"
+   creates: "{{ heketi_install_dir }}/heketi"
+   remote_src: true
+   extra_opts:
+    - --strip-components=1
 
-# Install Heketi tasks block from archive
-- name: ({{ ansible_distribution }}) - INSTALL - Tasks block on Supported system
-  block:
+- name: ({{ ansible_distribution }}) - INSTALL - Unarchive Downloaded Heketi Client archives
+  unarchive:
+   src: "{{ dl_c_file }}"
+   dest: "{{ heketi_install_client_dir }}"
+   creates: "{{ heketi_install_client_dir }}/bin/heketi-cli"
+   remote_src: true
+   extra_opts:
+    - --strip-components=1
 
-   - name: ({{ ansible_distribution }}) - INSTALL - Create Heketi Installation directory
-     file:
-      path: "{{ heketi_install_dir }}"
-      state: directory
+- name: ({{ ansible_distribution }}) - INSTALL - Create Heketi Symlink in (/usr/bin)
+  file:
+   src: "{{ heketi_install_dir }}/heketi"
+   dest: "{{ heketi_install_command_link }}"
+   state: link
 
-   - name: ({{ ansible_distribution }}) - INSTALL - Create Heketi Client Installation directory
-     file:
-      path: "{{ heketi_install_client_dir }}"
-      state: directory
+- name: ({{ ansible_distribution }}) - INSTALL - Update Inst. dir. Ownership to ({{ heketi_service_user }})
+  file:
+   path: "{{ heketi_install_dir }}"
+   state: directory
+   owner: "{{ heketi_service_user }}"
+   group: "{{ heketi_service_user }}"
+   recurse: true
 
-   - name: ({{ ansible_distribution }}) - INSTALL - Unarchive Downloaded Heketi archives
-     unarchive:
-      src: "{{ dl_file }}"
-      dest: "{{ heketi_install_dir }}"
-      creates: "{{ heketi_install_dir }}/heketi"
-      remote_src: true
-      extra_opts:
-       - --strip-components=1
-
-   - name: ({{ ansible_distribution }}) - INSTALL - Unarchive Downloaded Heketi Client archives
-     unarchive:
-      src: "{{ dl_c_file }}"
-      dest: "{{ heketi_install_client_dir }}"
-      creates: "{{ heketi_install_client_dir }}/bin/heketi-cli"
-      remote_src: true
-      extra_opts:
-       - --strip-components=1
-
-   - name: ({{ ansible_distribution }}) - INSTALL - Create Heketi Symlink in (/usr/bin)
-     file:
-      src: "{{ heketi_install_dir }}/heketi"
-      dest: "{{ heketi_install_command_link }}"
-      state: link
-
-   - name: ({{ ansible_distribution }}) - INSTALL - Update Inst. dir. Ownership to ({{ heketi_service_user }})
-     file:
-      path: "{{ heketi_install_dir }}"
-      state: directory
-      owner: "{{ heketi_service_user }}"
-      group: "{{ heketi_service_user }}"
-      recurse: true
-
-   - name: ({{ ansible_distribution }}) - INSTALL - Update Client Inst. dir. Ownership to ({{ heketi_service_user }})
-     file:
-      path: "{{ heketi_install_client_dir }}"
-      state: directory
-      owner: "{{ heketi_service_user }}"
-      group: "{{ heketi_service_user }}"
-      recurse: true
-
-  when:
-   - not repository_installation|bool
+- name: ({{ ansible_distribution }}) - INSTALL - Update Client Inst. dir. Ownership to ({{ heketi_service_user }})
+  file:
+   path: "{{ heketi_install_client_dir }}"
+   state: directory
+   owner: "{{ heketi_service_user }}"
+   group: "{{ heketi_service_user }}"
+   recurse: true

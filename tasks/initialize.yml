@@ -2,62 +2,29 @@
 
 - name: ({{ ansible_distribution }}) - INIT - Define commons facts
   set_fact:
-   repository_installation: "{{ heketi_install_from_repo | default(false) }}"
    install_arch: "{{ heketi_install_arch | default('amd64') }}"
    install_version: "{{ heketi_install_version | default('9.0.0') }}"
    heketi_dl_base_url: "https://github.com/heketi/heketi/releases/download"
 
-- name: ({{ ansible_distribution }}) - INIT - Initialize block when install from repository
-  block:
-
-   - name: ({{ ansible_distribution }}) - INIT - Check Heketi install from repository on RedHat Family > 6
-     fail:
-      msg: "L'installation via le repository disponible pour (RedHat/CentOS) > 6"
-     when:
-      - ansible_os_family == "RedHat"
-      - ansible_distribution_major_version|int < 7
-
-   - name: ({{ ansible_distribution }}) - INIT - Check Heketi required parameters on repository install
-     fail:
-      msg: "Vérifier les paramètres obligatoires : (gluster_release)"
-     when:
-      - gluster_release is not defined
-      - ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
-
-   - name: ({{ ansible_distribution }}) - INIT - Define commons facts for repository installation
-     set_fact:
-      packages:
-       - "centos-release-gluster{{ gluster_release }}"
-       - "heketi"
-       - "heketi-client"
-     when:
-      - ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
-
+- name: ({{ ansible_distribution }}) - INIT - Check Heketi required 'heketi_install_arch' parameter value
+  fail:
+   msg: "Valeurs permises [heketi_install_arch] : [amd, amd64, arm, arm64]"
   when:
-   - repository_installation|bool
+   - install_arch not in ["amd", "amd64", "arm", "arm64"]
+   - heketi_install|bool
 
-- name: ({{ ansible_distribution }}) - INIT - Initialize block when install from archive
-  block:
-
-   - name: ({{ ansible_distribution }}) - INIT - Check Heketi required 'heketi_install_arch' parameter value
-     fail:
-      msg: "Valeurs permises [heketi_install_arch] : [amd, amd64, arm, arm64]"
-     when:
-      - install_arch not in ["amd", "amd64", "arm", "arm64"]
-
-   - name: ({{ ansible_distribution }}) - INIT - Define commons facts for archive installation
-     set_fact:
-      dl_url: "{{ heketi_dl_base_url }}/v{{ install_version }}/heketi-v{{ install_version }}.linux\
-      .{{ install_arch }}.tar.gz"
-      dl_c_url: "{{ heketi_dl_base_url }}/v{{ install_version }}/heketi-client-v{{ install_version }}\
-      .linux.{{ install_arch }}.tar.gz"
-      dl_file: "/tmp/heketi-v{{ install_version }}.linux.{{ install_arch }}.tar.gz"
-      dl_c_file: "/tmp/heketi-client-v{{ install_version }}.linux.{{ install_arch }}.tar.gz"
-      heketi_install_dir: "{{ heketi_install_dir | default('/etc/keheti') }}"
-      heketi_install_client_dir: "{{ heketi_install_client_dir | default('/etc/keheti-client') }}"
-
+- name: ({{ ansible_distribution }}) - INIT - Define commons facts for archive installation
+  set_fact:
+   dl_url: "{{ heketi_dl_base_url }}/v{{ install_version }}/heketi-v{{ install_version }}.linux\
+   .{{ install_arch }}.tar.gz"
+   dl_c_url: "{{ heketi_dl_base_url }}/v{{ install_version }}/heketi-client-v{{ install_version }}\
+   .linux.{{ install_arch }}.tar.gz"
+   dl_file: "/tmp/heketi-v{{ install_version }}.linux.{{ install_arch }}.tar.gz"
+   dl_c_file: "/tmp/heketi-client-v{{ install_version }}.linux.{{ install_arch }}.tar.gz"
+   heketi_install_dir: "{{ heketi_install_dir | default('/etc/keheti') }}"
+   heketi_install_client_dir: "{{ heketi_install_client_dir | default('/etc/keheti-client') }}"
   when:
-   - not repository_installation|bool
+   - heketi_install|bool
 
 - name: ({{ ansible_distribution }}) - INIT - Define service facts for CentOS 6
   set_fact:
@@ -67,6 +34,7 @@
   when:
    - ansible_distribution == "CentOS"
    - ansible_distribution_major_version|int == 6
+   - heketi_configure|bool
 
 - name: ({{ ansible_distribution }}) - INIT - Define service facts for CentOS > 6
   set_fact:
@@ -74,12 +42,14 @@
   when:
    - ansible_distribution == "CentOS"
    - ansible_distribution_major_version|int > 6
+   - heketi_configure|bool
 
 - name: ({{ ansible_distribution }}) - INIT - Define service facts for Ubuntu
   set_fact:
    heketi_service_unit_dir: "/lib/systemd/system"
   when:
    - ansible_distribution == "Ubuntu"
+   - heketi_configure|bool
 
 - name: ({{ ansible_distribution }}) - INIT - Define service facts for OS other than CentOS 6
   set_fact:
@@ -89,6 +59,7 @@
    heketi_service_user: "{{ heketi_service_user | default('heketi') }}"
   when:
    - ansible_distribution != "CentOS" or ansible_distribution_major_version|int > 6
+   - heketi_configure|bool
 
 - name: ({{ ansible_distribution }}) - INIT - Define commons facts for all type installation
   set_fact:
@@ -146,6 +117,7 @@
   when:
    - heketi_node_ssh_keyfile is not defined
    - heketi_node_executor == 'ssh'
+   - heketi_install|bool
 
 - name: ({{ ansible_distribution }}) - INIT - Check Heketi SSH User name
   fail:
@@ -153,3 +125,4 @@
   when:
    - heketi_node_ssh_user is not defined
    - heketi_node_executor == 'ssh'
+   - heketi_install|bool

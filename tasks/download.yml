@@ -1,17 +1,11 @@
 ---
 
-- name: ({{ ansible_distribution }}) - DOWNLOAD - Block when install from archive
-  block:
+- name: ({{ ansible_distribution }}) - DOWNLOAD - Download Heketi Server
+  get_url:
+   url: "{{ dl_url }}"
+   dest: "{{ dl_file }}"
 
-   - name: ({{ ansible_distribution }}) - DOWNLOAD - Download Heketi Server
-     get_url:
-      url: "{{ dl_url }}"
-      dest: "{{ dl_file }}"
-
-   - name: ({{ ansible_distribution }}) - DOWNLOAD - Download Heketi Client
-     get_url:
-      url: "{{ dl_c_url }}"
-      dest: "{{ dl_c_file }}"
-
-  when:
-   - not repository_installation|bool
+- name: ({{ ansible_distribution }}) - DOWNLOAD - Download Heketi Client
+  get_url:
+   url: "{{ dl_c_url }}"
+   dest: "{{ dl_c_file }}"
