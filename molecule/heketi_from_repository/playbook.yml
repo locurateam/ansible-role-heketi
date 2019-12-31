@@ -3,11 +3,22 @@
   hosts: all
   no_log: false
 
-  roles:
+  tasks:
 
-   - role: ansible-role-heketi
-     vars:
-      heketi_install: true
-      install_from_repo: true
-      gluster_release: 7
-      heketi_configure: false
+   - name: "Ensure Custom keys"
+     copy:
+      src: "{{ item }}"
+      dest: "/etc/ssh/"
+      mode: u+rw,g-rwx,o-rwx
+     loop:
+      - "keys/heketi_rsa"
+      - "keys/heketi_rsa.pub"
+
+   - name: "Execute heketi ansible role"
+     include_role:
+      name: ansible-role-heketi
+      vars:
+       heketi_install: true
+       install_from_repo: true
+       gluster_release: 7
+       heketi_configure: false
