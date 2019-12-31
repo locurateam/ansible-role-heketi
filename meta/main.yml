@@ -2,7 +2,7 @@
 galaxy_info:
     author: jetune
     role_name: heketi
-    description: Maven installation ansible role
+    description: Heketi installation ansible role
     company: "Kube Cloud"
     issue_tracker_url: https://github.com/kube-cloud/ansible-role-heketi.git
     license: "license (Apache 2.0)"
