@@ -50,7 +50,7 @@
    - name: ({{ ansible_distribution }}) - INSTALL - Create Heketi Symlink in (/usr/bin)
      file:
       src: "{{ heketi_install_dir }}/heketi"
-      dest: "/usr/bin/heketi"
+      dest: "{{ heketi_install_command_link }}"
       state: link
 
    - name: ({{ ansible_distribution }}) - INSTALL - Update Inst. dir. Ownership to ({{ heketi_service_user }})

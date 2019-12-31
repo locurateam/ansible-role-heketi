@@ -1,0 +1,103 @@
+#!/bin/sh
+#
+# heketi - this script starts and stops the heketi daemon
+#
+# description:  {{ heketi_service_unit_description }}
+# processname: heketi
+# config:      {{ heketi_config_dir }}/{{ heketi_config_filename }}
+# pidfile:     {{ heketi_service_pid_file }}
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Define heketi command
+heketi="{{ heketi_install_command_link }}"
+
+# Heketi Program base name
+prog=$(basename $heketi)
+
+# Lock file for Heketi
+lockfile="/var/lock/subsys/heketi"
+
+# PID file for Heketi
+pidfile="{{ heketi_service_pid_file }}"
+
+# Configuration file for Heketi
+HEKETI_CONF_FILE="{{ heketi_config_dir }}/{{ heketi_config_filename }}"
+
+# Heketi daemon start
+start() {
+	
+	# Exit if "{{ heketi_install_command_link }}" is not executable
+    [ -x $heketi ] || exit 5
+    
+    # Exit if "{{ heketi_config_dir }}/{{ heketi_config_filename }}" is not existing file
+    [ -f $HEKETI_CONF_FILE ] || exit 6
+    
+    # Log
+    echo -n $"Starting $prog: "
+    
+    # Daemon the command
+    daemon $heketi --config=$HEKETI_CONF_FILE
+    
+    # Get the daemon command result
+    retval=$?
+    
+    # Log
+    echo
+    
+    # Create lock file if the command executed well
+    [ $retval -eq 0 ] && touch $lockfile
+    
+    # Return the execution command retur code
+    return $retval
+}
+
+# Heketi daemon start
+stop() {
+	
+	# Log
+    echo -n $"Stopping $prog: "
+    
+    # Kill process
+    killproc -p $pidfile $prog
+    
+    # Get the kill command return code
+    retval=$?
+    
+    # Log
+    echo
+    
+    # Delete lock file if kill command executed well
+    [ $retval -eq 0 ] && rm -f $lockfile
+    
+    # Return the kill commdna return code
+    return $retval
+}
+
+# Heketi daemon restart
+restart() {
+    
+    # Stop Daemon
+    stop
+    
+    # Start Demon
+    start
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        restart
+        ;;
+    reload)
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|restart|reload}"
+        exit 2
+esac

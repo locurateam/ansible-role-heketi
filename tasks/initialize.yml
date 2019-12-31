@@ -59,9 +59,41 @@
   when:
    - not repository_installation|bool
 
+- name: ({{ ansible_distribution }}) - INIT - Define service facts for CentOS 6
+  set_fact:
+   heketi_service_template: "templates/heketi-bootstrap.j2"
+   heketi_service_unit_dir: "/etc/rc.d/init.d"
+   heketi_service_filename: "heketi"
+  when:
+   - ansible_distribution == "CentOS"
+   - ansible_distribution_major_version|int == 6
+
+- name: ({{ ansible_distribution }}) - INIT - Define service facts for CentOS > 6
+  set_fact:
+   heketi_service_unit_dir: "/usr/lib/systemd/system"
+  when:
+   - ansible_distribution == "CentOS"
+   - ansible_distribution_major_version|int > 6
+
+- name: ({{ ansible_distribution }}) - INIT - Define service facts for Ubuntu
+  set_fact:
+   heketi_service_unit_dir: "/lib/systemd/system"
+  when:
+   - ansible_distribution == "Ubuntu"
+
+- name: ({{ ansible_distribution }}) - INIT - Define service facts for OS other than CentOS 6
+  set_fact:
+   heketi_service_template: "templates/heketi.service.j2"
+   heketi_service_filename: "heketi.service"
+   heketi_service_working_dir: "{{ heketi_service_working_dir | default('/var/lib/heketi') }}"
+   heketi_service_user: "{{ heketi_service_user | default('heketi') }}"
+  when:
+   - ansible_distribution != "CentOS" or ansible_distribution_major_version|int > 6
+
 - name: ({{ ansible_distribution }}) - INIT - Define commons facts for all type installation
   set_fact:
    heketi_install: "{{ heketi_install | default(true) }}"
+   heketi_install_command_link: "{{ heketi_install_command_link | default('/usr/bin/heketi') }}"
    heketi_configure: "{{ heketi_configure | default(true) }}"
    heketi_config_dir: "{{ heketi_config_dir | default('/etc/keheti') }}"
    heketi_config_client_dir: "{{ heketi_config_client_dir | default('/etc/keheti-client') }}"
@@ -69,11 +101,8 @@
    heketi_config_client_filename: "{{ heketi_config_client_filename | default('heketi-client.conf') }}"
    heketi_data_dir: "{{ heketi_data_dir | default('/var/lib/heketi') }}"
    heketi_node_executor: "{{ heketi_node_executor | default('ssh') }}"
-   heketi_service_unit_dir: "{{ heketi_service_unit_dir | default('/usr/lib/systemd/system') }}"
-   heketi_service_filename: "{{ heketi_service_filename | default('heketi.service') }}"
-   heketi_service_unit_description: "{{ heketi_service_unit_description | default('Heketi Provisioning Server') }}"
-   heketi_service_working_dir: "{{ heketi_service_working_dir | default('/var/lib/heketi') }}"
-   heketi_service_user: "{{ heketi_service_user | default('heketi') }}"
+   heketi_service_unit_description: "{{ heketi_service_unit_description | default('Heketi Storage Provisioning Server') }}"
+   heketi_service_pid_file: "{{ heketi_service_pid_file | default('/var/run/heketi.pid') }}"
    heketi_http_port: "{{ heketi_http_port | default('8080') }}"
    heketi_tls_enabled: "{{ heketi_tls_enabled | default(false) }}"
    heketi_cert_file: "{{ heketi_cert_file | default('') }}"

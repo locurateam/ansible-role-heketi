@@ -5,11 +5,6 @@
    path: "{{ heketi_config_dir }}"
    state: directory
 
-- name: ({{ ansible_distribution }}) - CONFIG -  Create Heketi Service Working directory
-  file:
-   path: "{{ heketi_service_working_dir }}"
-   state: directory
-
 - name: ({{ ansible_distribution }}) - CONFIG -  Create Heketi Client Configuration directory
   file:
    path: "{{ heketi_config_client_dir }}"
@@ -26,22 +21,9 @@
    dest: "{{ heketi_config_dir }}/{{ heketi_config_filename }}"
    mode: a+rx
 
-- name: ({{ ansible_distribution }}) - CONFIG - Initialize Heketi Service template
-  template:
-   src: "templates/heketi.service.j2"
-   dest: "{{ heketi_service_unit_dir }}/{{ heketi_service_filename }}"
-
 - name: ({{ ansible_distribution }}) - CONFIG - Update conf. dir. Ownership to ({{ heketi_service_user }})
   file:
    path: "{{ heketi_config_dir }}"
-   state: directory
-   owner: "{{ heketi_service_user }}"
-   group: "{{ heketi_service_user }}"
-   recurse: true
-
-- name: ({{ ansible_distribution }}) - CONFIG - Update Service Working dir. Ownership to ({{ heketi_service_user }})
-  file:
-   path: "{{ heketi_service_working_dir }}"
    state: directory
    owner: "{{ heketi_service_user }}"
    group: "{{ heketi_service_user }}"
@@ -60,12 +42,36 @@
    group: "{{ heketi_service_user }}"
    recurse: true
 
+- name: ({{ ansible_distribution }}) - CONFIG - Initialize Heketi Service template
+  template:
+   src: "{{ heketi_service_template }}"
+   dest: "{{ heketi_service_unit_dir }}/{{ heketi_service_filename }}"
+
+# Configure Heketi Service for OS other than CentOS 6
+- name: ({{ ansible_distribution }}) - CONFIG - Service Tasks block on OS other than CentOS 6
+  block:
+
+   - name: ({{ ansible_distribution }}) - CONFIG -  Create Heketi Service Working directory
+     file:
+      path: "{{ heketi_service_working_dir }}"
+      state: directory
+
+   - name: ({{ ansible_distribution }}) - CONFIG - Update Service Working dir. Ownership to ({{ heketi_service_user }})
+     file:
+      path: "{{ heketi_service_working_dir }}"
+      state: directory
+      owner: "{{ heketi_service_user }}"
+      group: "{{ heketi_service_user }}"
+      recurse: true
+
+  when:
+   - ansible_distribution != "CentOS" or ansible_distribution_major_version|int > 6
+
 - name: ({{ ansible_distribution }}) - CONFIG - Reload Heketi Service ("{{ heketi_service_filename.split('.')[0] }}")
   service:
    name: "{{ heketi_service_filename.split('.')[0] }}"
    enabled: true
    daemon_reload: true
-   user: "{{ heketi_service_user }}"
    state: restarted
   changed_when: false
   failed_when: false
