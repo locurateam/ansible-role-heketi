@@ -3,7 +3,7 @@
 ![Python](https://img.shields.io/pypi/pyversions/testinfra.svg?style=flat)
 ![Licence](https://img.shields.io/github/license/kube-cloud/ansible-role-heketi.svg?style=flat)
 [![Travis Build](https://img.shields.io/travis/kube-cloud/ansible-role-heketi.svg?style=flat)](https://travis-ci.com/kube-cloud/ansible-role-heketi)
-[![Galaxy Role Downloads](https://img.shields.io/ansible/role/d/41894.svg?style=flat)](https://galaxy.ansible.com/jetune/heketi)
+[![Galaxy Role Downloads](https://img.shields.io/ansible/role/d/45449.svg?style=flat)](https://galaxy.ansible.com/jetune/heketi)
 
 Ansible role used to install Heketi on Linux based Operating System.
 
