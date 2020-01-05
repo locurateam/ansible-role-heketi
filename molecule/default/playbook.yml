@@ -5,15 +5,6 @@
 
   tasks:
 
-   - name: "Ensure Custom keys"
-     copy:
-      src: "{{ item }}"
-      dest: "/etc/ssh/"
-      mode: u+rw,g-rwx,o-rwx
-     loop:
-      - "keys/heketi_rsa"
-      - "keys/heketi_rsa.pub"
-
    - name: "Execute heketi ansible role"
      include_role:
       name: ansible-role-heketi
@@ -35,6 +26,7 @@
       heketi_service_working_dir: "/appli/hkt/var/lib"
       heketi_service_user: "root"
       heketi_service_pid_file: "/var/run/heketi.pid"
+      heketi_node_source_ssh_keyfile: "keys/heketi_rsa"
       heketi_node_ssh_keyfile: "/etc/ssh/heketi_rsa"
       heketi_node_ssh_user: "root"
       heketi_node_xfs_sw: 10

@@ -111,6 +111,14 @@
    heketi_node_pre_request_volume_options: "{{ heketi_node_pre_request_volume_options | default('') }}"
    heketi_node_post_request_volume_options: "{{ heketi_node_post_request_volume_options | default('') }}"
 
+- name: ({{ ansible_distribution }}) - INIT - Check Heketi Source SSH Key File
+  fail:
+   msg: "Vérifier le chemin vers la clé SSH du serveur HEKETI à copier [Le chemin de fichier doit être renseigné]"
+  when:
+   - heketi_node_source_ssh_keyfile is not defined
+   - heketi_node_executor == 'ssh'
+   - heketi_install|bool
+
 - name: ({{ ansible_distribution }}) - INIT - Check Heketi SSH Key File
   fail:
    msg: "Vérifier le chemin vers la clé SSH du serveur HEKETI [Le chemin de fichier doit être renseigné]"

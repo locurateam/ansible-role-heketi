@@ -5,6 +5,11 @@
    path: "{{ heketi_config_dir }}"
    state: directory
 
+- name: ({{ ansible_distribution }}) - CONFIG - Create Heketi Keys directory
+  file:
+   path: "{{ heketi_node_ssh_keyfile | dirname }}"
+   state: directory
+
 - name: ({{ ansible_distribution }}) - CONFIG -  Create Heketi Client Configuration directory
   file:
    path: "{{ heketi_config_client_dir }}"
@@ -14,6 +19,13 @@
   file:
    path: "{{ heketi_data_dir }}"
    state: directory
+
+- name: "Ensure Heketi key is added"
+  copy:
+   src: "{{ heketi_node_source_ssh_keyfile }}"
+   dest: "{{ heketi_node_ssh_keyfile }}"
+   owner: "{{ heketi_service_user }}"
+   mode: u+rw,g-rwx,o-rwx
 
 - name: ({{ ansible_distribution }}) - CONFIG - Initialize Heketi Configuration template
   template:
