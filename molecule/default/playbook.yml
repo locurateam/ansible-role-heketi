@@ -32,7 +32,6 @@
       heketi_node_ssh_command_sudo: false
       heketi_node_xfs_sw: 10
       heketi_node_xfs_su: 10
-      
       heketi_node_brick_max_size_gb: 1024
       heketi_node_brick_min_size_gb: 1
       heketi_node_max_bricks_per_volume: 33
