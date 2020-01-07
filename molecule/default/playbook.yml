@@ -29,5 +29,9 @@
       heketi_node_source_ssh_keyfile: "keys/heketi_rsa"
       heketi_node_ssh_keyfile: "/etc/ssh/heketi_rsa"
       heketi_node_ssh_user: "root"
+      heketi_node_ssh_command_sudo: false
       heketi_node_xfs_sw: 10
       heketi_node_xfs_su: 10
+      brick_max_size_gb: 1024
+      brick_min_size_gb: 1
+      max_bricks_per_volume: 33

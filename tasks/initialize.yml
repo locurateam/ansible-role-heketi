@@ -110,6 +110,10 @@
    default('group gluster-block') }}"
    heketi_node_pre_request_volume_options: "{{ heketi_node_pre_request_volume_options | default('') }}"
    heketi_node_post_request_volume_options: "{{ heketi_node_post_request_volume_options | default('') }}"
+   heketi_node_ssh_command_sudo: "{{ heketi_node_ssh_command_sudo | default(true) }}"
+   brick_max_size_gb: "{{ brick_max_size_gb | default(1024) }}"
+   brick_min_size_gb: "{{ brick_min_size_gb | default(1) }}"
+   max_bricks_per_volume: "{{ max_bricks_per_volume | default(33) }}"
 
 - name: ({{ ansible_distribution }}) - INIT - Check Heketi Source SSH Key File
   fail:

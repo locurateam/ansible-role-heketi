@@ -51,9 +51,14 @@ Ansible role used to install Heketi on Linux based Operating System.
       heketi_service_working_dir: "/appli/hkt/var/lib"
       heketi_service_user: "root"
       heketi_service_pid_file: "/var/run/heketi.pid"
+      heketi_node_source_ssh_keyfile: "keys/heketi_rsa"
       heketi_node_ssh_keyfile: "/etc/ssh/heketi_rsa"
       heketi_node_ssh_user: "root"
+      heketi_node_ssh_command_sudo: false
       heketi_node_xfs_sw: 10
       heketi_node_xfs_su: 10
+      brick_max_size_gb: 1024
+      brick_min_size_gb: 1
+      max_bricks_per_volume: 33
 
 ```

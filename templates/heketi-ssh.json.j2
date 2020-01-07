@@ -19,6 +19,7 @@
 		"sshexec": {
 			"keyfile": "{{ heketi_node_ssh_keyfile }}",
 			"user": "{{ heketi_node_ssh_user }}",
+			"sudo": {{ heketi_node_ssh_command_sudo | lower }}
 			"port": "{{ heketi_node_ssh_port }}",
 			"fstab": "{{ heketi_node_fstab }}",
 			"pv_data_alignment": "{{ heketi_node_pv_data_alignment }}",
@@ -33,9 +34,9 @@
 			"backup_lvm_metadata": {{ heketi_node_backup_lvm_metadata | lower }},
 			"gluster_cli_timeout": {{ heketi_node_cli_timeout }},
 			"debug_umount_failures": {{ heketi_node_debug_umount_failures | lower }},
-			"brick_max_size_gb" : 1024,
-			"brick_min_size_gb" : 1,
-			"max_bricks_per_volume" : 33
+			"brick_max_size_gb" : {{ brick_max_size_gb }},
+			"brick_min_size_gb" : {{ brick_min_size_gb }},
+			"max_bricks_per_volume" : {{ max_bricks_per_volume }}
 		},
 		
 		"db": "{{ heketi_data_dir }}/{{ heketi_db_name }}",
