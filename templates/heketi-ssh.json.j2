@@ -19,7 +19,7 @@
 		"sshexec": {
 			"keyfile": "{{ heketi_node_ssh_keyfile }}",
 			"user": "{{ heketi_node_ssh_user }}",
-			"sudo": {{ heketi_node_ssh_command_sudo | lower }}
+			"sudo": {{ heketi_node_ssh_command_sudo | lower }},
 			"port": "{{ heketi_node_ssh_port }}",
 			"fstab": "{{ heketi_node_fstab }}",
 			"pv_data_alignment": "{{ heketi_node_pv_data_alignment }}",
