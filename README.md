@@ -57,8 +57,33 @@ Ansible role used to install Heketi on Linux based Operating System.
       heketi_node_ssh_command_sudo: false
       heketi_node_xfs_sw: 10
       heketi_node_xfs_su: 10
-      brick_max_size_gb: 1024
-      brick_min_size_gb: 1
-      max_bricks_per_volume: 33
+      heketi_node_brick_max_size_gb: 1024
+      heketi_node_brick_min_size_gb: 1
+      heketi_node_max_bricks_per_volume: 33
+      heketi_config_topology_nodes:
+       - zone: 1
+         manage_host_names:
+          - "192.168.1.1"
+         storage_host_names:
+          - "172.16.1.1"
+         devices:
+          - name: "/dev/sdb"
+            destroydata: false
+       - zone: 2
+         manage_host_names:
+          - "192.168.1.2"
+         storage_host_names:
+          - "172.16.1.2"
+         devices:
+          - name: "/dev/sdb"
+            destroydata: false
+       - zone: 3
+         manage_host_names:
+          - "192.168.1.3"
+         storage_host_names:
+          - "172.16.1.3"
+         devices:
+          - name: "/dev/sdb"
+            destroydata: false
 
 ```

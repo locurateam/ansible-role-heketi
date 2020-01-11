@@ -28,8 +28,8 @@
    mode: u+rw,g-rwx,o-rwx
 
 - name: ({{ ansible_distribution }}) - CONFIG - Initialize Heketi Configuration template
-  template:
-   src: "templates/heketi-{{ heketi_node_executor }}.json.j2"
+  copy:
+   content: "{{ lookup('template', 'templates/heketi-' + heketi_node_executor + '.json.j2') | to_nice_json }}"
    dest: "{{ heketi_config_dir }}/{{ heketi_config_filename }}"
    mode: a+rx
 
@@ -45,6 +45,12 @@
   file:
    path: "{{ heketi_config_client_dir }}"
    state: directory
+
+- name: ({{ ansible_distribution }}) - CONFIG - Initialize Heketi Client Configuration template
+  copy:
+   content: "{{ lookup('template', 'templates/heketi-topology.json.j2') | to_nice_json }}"
+   dest: "{{ heketi_config_client_dir }}/{{ heketi_config_client_filename }}"
+   mode: a+rx
 
 - name: ({{ ansible_distribution }}) - CONFIG - Update Data dir. Ownership to ({{ heketi_service_user }})
   file:
