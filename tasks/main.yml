@@ -26,4 +26,4 @@
       - heketi_configure|bool
 
   when:
-   - ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Ubuntu"
+   - ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Ubuntu" or  ansible_distribution == "Debian"

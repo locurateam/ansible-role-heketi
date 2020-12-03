@@ -44,11 +44,11 @@
    - ansible_distribution_major_version|int > 6
    - heketi_configure|bool
 
-- name: ({{ ansible_distribution }}) - INIT - Define service facts for Ubuntu
+- name: ({{ ansible_distribution }}) - INIT - Define service facts for Ubuntu or Debian
   set_fact:
    heketi_service_unit_dir: "/lib/systemd/system"
   when:
-   - ansible_distribution == "Ubuntu"
+   - ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
    - heketi_configure|bool
 
 - name: ({{ ansible_distribution }}) - INIT - Define service facts for OS other than CentOS 6
